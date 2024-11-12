@@ -18,6 +18,11 @@ class FolderService
      */
     protected $application;
 
+    /**
+     * @var \Concrete\Core\Page\Page|null
+     */
+    private $rootPage;
+
     public function __construct(Application $application, Connection $connection)
     {
         $this->connection = $connection;
@@ -58,11 +63,26 @@ class FolderService
     public function add($name, Folder $folder = null)
     {
         $type = Type::getByHandle(STACK_CATEGORY_PAGE_TYPE);
-        $parent = $folder ? $folder->getPage() : Page::getByPath(STACKS_PAGE_PATH);
+        $parent = $folder ? $folder->getPage() : $this->getRootPage();
         $data = array();
         $data['name'] = $name;
         $page = $parent->add($type, $data);
 
         return $this->application->make('Concrete\Core\Page\Stack\Folder\Folder', array('page' => $page));
+    }
+
+    /**
+     * @return \Concrete\Core\Page\Page|null returns NULL if it doesn't exist (shouldn't occur)
+     */
+    private function getRootPage()
+    {
+        if ($this->rootPage === null) {
+            $rootPage = Page::getByPath(STACKS_PAGE_PATH);
+            if ($rootPage && !$rootPage->isError()) {
+                $this->rootPage = $rootPage;
+            }
+        }
+
+        return $this->rootPage;
     }
 }
