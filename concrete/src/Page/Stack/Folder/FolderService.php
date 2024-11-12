@@ -3,6 +3,7 @@ namespace Concrete\Core\Page\Stack\Folder;
 
 use Concrete\Core\Application\Application;
 use Concrete\Core\Database\Connection\Connection;
+use Concrete\Core\Page\Page;
 use Concrete\Core\Page\Type\Type;
 
 class FolderService
@@ -30,7 +31,7 @@ class FolderService
      */
     public function getByPath($path)
     {
-        $c = \Page::getByPath(STACKS_PAGE_PATH . '/' . trim($path, '/'));
+        $c = Page::getByPath(STACKS_PAGE_PATH . '/' . trim($path, '/'));
         if ($c->getCollectionTypeHandle() == STACK_CATEGORY_PAGE_TYPE) {
             return $this->application->make('Concrete\Core\Page\Stack\Folder\Folder', array('page' => $c));
         }
@@ -43,7 +44,7 @@ class FolderService
      */
     public function getByID($cID)
     {
-        $c = \Page::getByID($cID);
+        $c = Page::getByID($cID);
         if ($c->getCollectionTypeHandle() == STACK_CATEGORY_PAGE_TYPE) {
             return $this->application->make('Concrete\Core\Page\Stack\Folder\Folder', array('page' => $c));
         }
@@ -57,7 +58,7 @@ class FolderService
     public function add($name, Folder $folder = null)
     {
         $type = Type::getByHandle(STACK_CATEGORY_PAGE_TYPE);
-        $parent = $folder ? $folder->getPage() : \Page::getByPath(STACKS_PAGE_PATH);
+        $parent = $folder ? $folder->getPage() : Page::getByPath(STACKS_PAGE_PATH);
         $data = array();
         $data['name'] = $name;
         $page = $parent->add($type, $data);
