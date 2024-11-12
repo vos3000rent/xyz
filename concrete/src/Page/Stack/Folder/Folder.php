@@ -10,10 +10,16 @@ use Concrete\Core\Permission\Key\Key;
 
 class Folder implements ExportableInterface, AssignableObjectInterface
 {
-
-    protected $connection;
+    /**
+     * @var \Concrete\Core\Page\Page
+     */
     protected $page;
 
+    /**
+     * @var \Concrete\Core\Database\Connection\Connection
+     */
+    protected $connection;
+    
     public function __construct(Page $page, Connection $connection)
     {
         $this->connection = $connection;
@@ -30,6 +36,11 @@ class Folder implements ExportableInterface, AssignableObjectInterface
         $this->page->setPermissionsToOverride();
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @see \Concrete\Core\Permission\AssignableObjectInterface::assignPermissions()
+     */
     public function assignPermissions(
         $userOrGroup,
         $permissions,
@@ -39,18 +50,21 @@ class Folder implements ExportableInterface, AssignableObjectInterface
         $this->page->assignPermissions($userOrGroup, $permissions,$accessType, $cascadeToChildren);
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * @see \Concrete\Core\Export\ExportableInterface::getExporter()
+     */
     public function getExporter()
     {
         return new StackFolder();
     }
 
     /**
-     * @return Page
+     * @return \Concrete\Core\Page\Page
      */
     public function getPage()
     {
         return $this->page;
     }
-
-
 }
