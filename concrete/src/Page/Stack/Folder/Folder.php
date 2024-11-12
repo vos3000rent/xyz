@@ -8,7 +8,7 @@ use Concrete\Core\Page\Page;
 use Concrete\Core\Permission\AssignableObjectInterface;
 use Concrete\Core\Permission\Key\Key;
 
-class Folder implements ExportableInterface, AssignableObjectInterface
+class Folder implements Container, ExportableInterface, AssignableObjectInterface
 {
     /**
      * @var \Concrete\Core\Page\Page
@@ -19,11 +19,17 @@ class Folder implements ExportableInterface, AssignableObjectInterface
      * @var \Concrete\Core\Database\Connection\Connection
      */
     protected $connection;
-    
-    public function __construct(Page $page, Connection $connection)
+
+    /**
+     * @var \Concrete\Core\Page\Stack\Folder\FolderService
+     */
+    protected $folderService;
+
+    public function __construct(Page $page, Connection $connection, FolderService $folderService)
     {
         $this->connection = $connection;
         $this->page = $page;
+        $this->folderService = $folderService;
     }
 
     public function setChildPermissionsToOverride()
@@ -61,10 +67,62 @@ class Folder implements ExportableInterface, AssignableObjectInterface
     }
 
     /**
-     * @return \Concrete\Core\Page\Page
+     * {@inheritdoc}
+     *
+     * @see \Concrete\Core\Page\Stack\Folder\Container::getPage()
      */
     public function getPage()
     {
         return $this->page;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @see \Concrete\Core\Page\Stack\Folder\Container::getParent()
+     */
+    public function getParent()
+    {
+        return $this->folderService->getByID($this->getPage()->getCollectionParentID()) ?: $this->folderService;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @see \Concrete\Core\Page\Stack\Folder\Container::getFolders()
+     */
+    public function getFolders()
+    {
+        return $this->folderService->getChildFolders($this);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @see \Concrete\Core\Page\Stack\Folder\Container::createSubfolder()
+     */
+    public function createSubfolder($name)
+    {
+        return $this->folderService->add($name, $this);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @see \Concrete\Core\Page\Stack\Folder\Container::getGlobalAreas()
+     */
+    public function getGlobalAreas()
+    {
+        return [];
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @see \Concrete\Core\Page\Stack\Folder\Container::getGlobalAreas()
+     */
+    public function getStacks()
+    {
+        return $this->folderService->getChildStacks($this);
     }
 }
