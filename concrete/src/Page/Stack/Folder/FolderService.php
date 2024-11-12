@@ -32,7 +32,7 @@ class FolderService
     public function getByPath($path)
     {
         $c = Page::getByPath(STACKS_PAGE_PATH . '/' . trim($path, '/'));
-        if ($c->getCollectionTypeHandle() == STACK_CATEGORY_PAGE_TYPE) {
+        if ($c->getPageTypeHandle() == STACK_CATEGORY_PAGE_TYPE) {
             return $this->application->make('Concrete\Core\Page\Stack\Folder\Folder', array('page' => $c));
         }
     }
@@ -45,7 +45,7 @@ class FolderService
     public function getByID($cID)
     {
         $c = Page::getByID($cID);
-        if ($c->getCollectionTypeHandle() == STACK_CATEGORY_PAGE_TYPE) {
+        if ($c->getPageTypeHandle() == STACK_CATEGORY_PAGE_TYPE) {
             return $this->application->make('Concrete\Core\Page\Stack\Folder\Folder', array('page' => $c));
         }
     }
