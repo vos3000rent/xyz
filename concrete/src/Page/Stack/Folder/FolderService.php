@@ -7,8 +7,14 @@ use Concrete\Core\Page\Type\Type;
 
 class FolderService
 {
-
+    /**
+     * @var \Concrete\Core\Database\Connection\Connection
+     */
     protected $connection;
+
+    /**
+     * @var \Concrete\Core\Application\Application
+     */
     protected $application;
 
     public function __construct(Application $application, Connection $connection)
@@ -17,6 +23,11 @@ class FolderService
         $this->application = $application;
     }
 
+    /**
+     * @param string $path
+     *
+     * @return \Concrete\Core\Page\Stack\Folder\Folder|null
+     */
     public function getByPath($path)
     {
         $c = \Page::getByPath(STACKS_PAGE_PATH . '/' . trim($path, '/'));
@@ -25,6 +36,11 @@ class FolderService
         }
     }
 
+    /**
+     * @param int $cID
+     *
+     * @return \Concrete\Core\Page\Stack\Folder\Folder|null
+     */
     public function getByID($cID)
     {
         $c = \Page::getByID($cID);
@@ -33,9 +49,13 @@ class FolderService
         }
     }
 
+    /**
+     * @param string $name
+     *
+     * @return \Concrete\Core\Page\Stack\Folder\Folder
+     */
     public function add($name, Folder $folder = null)
     {
-//        $site = \Core::make('site')->getActiveSiteForEditing();
         $type = Type::getByHandle(STACK_CATEGORY_PAGE_TYPE);
         $parent = $folder ? $folder->getPage() : \Page::getByPath(STACKS_PAGE_PATH);
         $data = array();
@@ -43,7 +63,5 @@ class FolderService
         $page = $parent->add($type, $data);
 
         return $this->application->make('Concrete\Core\Page\Stack\Folder\Folder', array('page' => $page));
-
     }
-
 }
