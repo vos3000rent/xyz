@@ -396,9 +396,12 @@ class Controller extends BlockController implements UsesFeatureInterface
         }
 
         if ($this->displayFeaturedOnly == 1) {
-            $cak = CollectionAttributeKey::getByHandle('is_featured');
-            if (is_object($cak)) {
-                $this->list->filterByIsFeatured(1);
+            $ak = CollectionKey::getByHandle('is_featured');
+            if ($ak->isAttributeKeySearchable()) {
+                $cak = CollectionAttributeKey::getByHandle('is_featured');
+                if (is_object($cak)) {
+                    $this->list->filterByIsFeatured(1);
+                }
             }
         }
         if ($this->displayAliases) {
