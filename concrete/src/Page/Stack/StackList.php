@@ -3,14 +3,21 @@ namespace Concrete\Core\Page\Stack;
 
 use Concrete\Core\Multilingual\Page\Section\Section;
 use Concrete\Core\Page\Stack\Folder\Folder;
-use Concrete\Core\Site\Tree\TreeInterface;
-use Loader;
 use Concrete\Core\Page\PageList;
 use Concrete\Core\Search\StickyRequest;
+use Doctrine\DBAL\Query\QueryBuilder;
 
 class StackList extends PageList
 {
-    protected $foldersFirst;
+    /**
+     * @var bool
+     */
+    protected $foldersFirst = false;
+
+    /**
+     * @var \Concrete\Core\Multilingual\Page\Section\Section|null
+     */
+    private $languageSection;
 
     public function __construct()
     {
@@ -21,7 +28,6 @@ class StackList extends PageList
         $this->query->leftJoin('p', 'Stacks', 's', 's.cID = p.cID');
         $this->ignorePermissions();
         $this->filterByPath(STACKS_PAGE_PATH);
-        $this->filter(false, '(s.stMultilingualSection is null or s.stMultilingualSection = 0)');
         $this->includeSystemPages();
         $this->sortByName();
     }
@@ -36,9 +42,27 @@ class StackList extends PageList
         }
     }
 
+    /**
+     * @deprecated Use getLanguageSection/setLanguageSection
+     */
     public function filterByLanguageSection(Section $ms)
     {
-        $this->filter('stMultilingualSection', $ms->getCollectionID());
+        $this->setLanguageSection($ms);
+    }
+
+    public function getLanguageSection(): ?Section
+    {
+        return $this->languageSection;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setLanguageSection(?Section $value = null): self
+    {
+        $this->languageSection = $value;
+
+        return $this;
     }
 
     /**
@@ -84,6 +108,24 @@ class StackList extends PageList
     public function filterByStackCategory(StackCategory $category)
     {
         $this->filterByParentID($category->getPage()->getCollectionID());
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @see \Concrete\Core\Page\PageList::finalizeQuery()
+     */
+    public function finalizeQuery(QueryBuilder $query)
+    {
+        $query = parent::finalizeQuery($query);
+        $languageSection = $this->getLanguageSection();
+        if ($languageSection === null) {
+            $query->andWhere('s.stMultilingualSection IS NULL OR s.stMultilingualSection = 0');
+        } else {
+            $query->andWhere('s.stMultilingualSection = ' . $query->createNamedParameter($languageSection->getCollectionID()));
+        }
+
+        return $query;
     }
 
     /**
