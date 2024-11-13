@@ -4,9 +4,8 @@ namespace Concrete\Core\Page\Stack\Folder;
 use Concrete\Core\Application\Application;
 use Concrete\Core\Database\Connection\Connection;
 use Concrete\Core\Page\Page;
-use Concrete\Core\Page\Type\Type;
 use Concrete\Core\Page\Stack\StackList;
-use Punic\Comparer;
+use Concrete\Core\Page\Type\Type;
 
 class FolderService implements Container
 {
@@ -125,7 +124,11 @@ class FolderService implements Container
     public function getGlobalAreas()
     {
         $stackList = new StackList();
-        $stackList->filterByGlobalAreas();
+        $stackList
+            ->setIncludeFolders(false)
+            ->setIncludeStacks(false)
+            ->filterByParentID($this->getRootPage()->getCollectionID())
+        ;
 
         return $stackList->getResults();
     }
@@ -150,29 +153,16 @@ class FolderService implements Container
     public function getChildFolders(Folder $parentFolder = null)
     {
         $parentPage = $parentFolder ? $parentFolder->getPage() : $this->getRootPage();
-        $rs = $this->connection->executeQuery(
-            'SELECT cID FROM Pages WHERE cParentID = :cParentID AND ptID = :ptID',
-            [
-                'cParentID' => $parentPage->getCollectionID(),
-                'ptID' => $this->getFolderPageType()->getPageTypeID(),
-            ]
-        );
+        $stackList = new StackList();
+        $stackList
+            ->setIncludeGlobalAreas(false)
+            ->setIncludeStacks(false)
+            ->filterByParentID($parentPage->getCollectionID())
+        ;
         $result = [];
-        while (($cID = $rs->fetchOne()) !== false) {
-            if (($folder = $this->getByID($cID)) !== null) {
-                $result[] = $folder;
-            }
+        foreach ($stackList->getResults() as $page) {
+            $result[] = $this->makeFolder($page);
         }
-        $comparer = new Comparer();
-        usort(
-            $result,
-            static function (Folder $a, Folder $b) use ($comparer) {
-                $pageA = $a->getPage();
-                $pageB = $b->getPage();
-
-                return $comparer->compare($pageA->getCollectionName(), $pageB->getCollectionName()) ?: ($pageA->getCollectionID() - $pageA->getCollectionID);
-            }
-        );
 
         return $result;
     }
@@ -187,8 +177,10 @@ class FolderService implements Container
     public function getChildStacks(Folder $parentFolder = null)
     {
         $stackList = new StackList();
-        $stackList->excludeGlobalAreas();
-        $stackList->getQueryObject()->andWhere('p.ptID <> :folderPageType')->setParameter('folderPageType', $this->getFolderPageType()->getPageTypeID());
+        $stackList
+            ->setIncludeFolders(false)
+            ->setIncludeGlobalAreas(false)
+        ;
         if ($parentFolder === null) {
             $stackList->filterByParentID($this->getRootPage()->getCollectionID());
         } else {
