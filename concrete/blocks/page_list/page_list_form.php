@@ -291,10 +291,15 @@ echo $userInterface->tabs([
                     echo $form->label("featuredPagesOnly", t("Featured pages only."), ["class" => "form-check-label"]);
                     ?>
 
-                    <?php if (!is_object($featuredAttribute)) { ?>
+                    <?php if (!is_object($featuredAttribute) || !$featuredAttribute->isAttributeKeySearchable()) { ?>
                         <div class="help-block">
-                            <?php echo t(
-                                '(<strong>Note</strong>: You must create the "is_featured" page attribute first.)');
+                            <?php
+                            if (!is_object($featuredAttribute)) {
+                                echo t('(<strong>Note</strong>: You must create the "is_featured" page attribute first.)');
+                            }
+                            elseif (!$featuredAttribute->isAttributeKeySearchable()) {
+                                echo t('<strong>Filter Disabled</strong>: The "is_featured" page attribute is not available for advanced search.');
+                            }
                             ?>
                         </div>
                     <?php } ?>
