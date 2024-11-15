@@ -5,6 +5,7 @@ use Concrete\Core\Database\Connection\Connection;
 use Concrete\Core\Export\ExportableInterface;
 use Concrete\Core\Export\Item\StackFolder;
 use Concrete\Core\Page\Page;
+use Concrete\Core\Page\Stack\Container;
 use Concrete\Core\Permission\AssignableObjectInterface;
 use Concrete\Core\Permission\Key\Key;
 
@@ -69,7 +70,7 @@ class Folder implements Container, ExportableInterface, AssignableObjectInterfac
     /**
      * {@inheritdoc}
      *
-     * @see \Concrete\Core\Page\Stack\Folder\Container::getPage()
+     * @see \Concrete\Core\Page\Stack\Container::getPage()
      */
     public function getPage()
     {
@@ -79,7 +80,7 @@ class Folder implements Container, ExportableInterface, AssignableObjectInterfac
     /**
      * {@inheritdoc}
      *
-     * @see \Concrete\Core\Page\Stack\Folder\Container::getParent()
+     * @see \Concrete\Core\Page\Stack\Container::getParent()
      */
     public function getParent()
     {
@@ -89,7 +90,7 @@ class Folder implements Container, ExportableInterface, AssignableObjectInterfac
     /**
      * {@inheritdoc}
      *
-     * @see \Concrete\Core\Page\Stack\Folder\Container::getFolders()
+     * @see \Concrete\Core\Page\Stack\Container::getFolders()
      */
     public function getFolders()
     {
@@ -99,7 +100,7 @@ class Folder implements Container, ExportableInterface, AssignableObjectInterfac
     /**
      * {@inheritdoc}
      *
-     * @see \Concrete\Core\Page\Stack\Folder\Container::createSubfolder()
+     * @see \Concrete\Core\Page\Stack\Container::createSubfolder()
      */
     public function createSubfolder($name)
     {
@@ -109,7 +110,7 @@ class Folder implements Container, ExportableInterface, AssignableObjectInterfac
     /**
      * {@inheritdoc}
      *
-     * @see \Concrete\Core\Page\Stack\Folder\Container::getGlobalAreas()
+     * @see \Concrete\Core\Page\Stack\Container::getGlobalAreas()
      */
     public function getGlobalAreas()
     {
@@ -119,7 +120,7 @@ class Folder implements Container, ExportableInterface, AssignableObjectInterfac
     /**
      * {@inheritdoc}
      *
-     * @see \Concrete\Core\Page\Stack\Folder\Container::getGlobalAreas()
+     * @see \Concrete\Core\Page\Stack\Container::getGlobalAreas()
      */
     public function getStacks()
     {

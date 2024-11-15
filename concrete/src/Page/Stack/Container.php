@@ -1,6 +1,6 @@
 <?php
 
-namespace Concrete\Core\Page\Stack\Folder;
+namespace Concrete\Core\Page\Stack;
 
 /**
  * An interface implemented by classes that provides folders and stacks
@@ -13,7 +13,7 @@ interface Container
     public function getPage();
 
     /**
-     * @return \Concrete\Core\Page\Stack\Folder\Container|null
+     * @return \Concrete\Core\Page\Stack\Container|null
      */
     public function getParent();
 

@@ -4,6 +4,7 @@ namespace Concrete\Core\Page\Stack\Folder;
 use Concrete\Core\Application\Application;
 use Concrete\Core\Database\Connection\Connection;
 use Concrete\Core\Page\Page;
+use Concrete\Core\Page\Stack\Container;
 use Concrete\Core\Page\Stack\StackList;
 use Concrete\Core\Page\Type\Type;
 
@@ -79,7 +80,7 @@ class FolderService implements Container
     /**
      * {@inheritdoc}
      *
-     * @see \Concrete\Core\Page\Stack\Folder\Container::getPage()
+     * @see \Concrete\Core\Page\Stack\Container::getPage()
      */
     public function getPage()
     {
@@ -89,7 +90,7 @@ class FolderService implements Container
     /**
      * {@inheritdoc}
      *
-     * @see \Concrete\Core\Page\Stack\Folder\Container::getParent()
+     * @see \Concrete\Core\Page\Stack\Container::getParent()
      */
     public function getParent()
     {
@@ -99,7 +100,7 @@ class FolderService implements Container
     /**
      * {@inheritdoc}
      *
-     * @see \Concrete\Core\Page\Stack\Folder\Container::getFolders()
+     * @see \Concrete\Core\Page\Stack\Container::getFolders()
      */
     public function getFolders()
     {
@@ -109,7 +110,7 @@ class FolderService implements Container
     /**
      * {@inheritdoc}
      *
-     * @see \Concrete\Core\Page\Stack\Folder\Container::createSubfolder()
+     * @see \Concrete\Core\Page\Stack\Container::createSubfolder()
      */
     public function createSubfolder($name)
     {
@@ -119,7 +120,7 @@ class FolderService implements Container
     /**
      * {@inheritdoc}
      *
-     * @see \Concrete\Core\Page\Stack\Folder\Container::getGlobalAreas()
+     * @see \Concrete\Core\Page\Stack\Container::getGlobalAreas()
      */
     public function getGlobalAreas()
     {
@@ -136,7 +137,7 @@ class FolderService implements Container
     /**
      * {@inheritdoc}
      *
-     * @see \Concrete\Core\Page\Stack\Folder\Container::getStacks()
+     * @see \Concrete\Core\Page\Stack\Container::getStacks()
      */
     public function getStacks()
     {
