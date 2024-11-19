@@ -848,6 +848,25 @@ class Area extends ConcreteObject implements \Concrete\Core\Permission\ObjectInt
 
         foreach ($blocksToDisplay as $b) {
             $bv = new BlockView($b);
+
+            if($b->getBlockTypeHandle() == "core_scrapbook_display") {
+                $bOriginalID = $b->instance->getOriginalBlockID();
+                if ($bOriginalID) {
+                    $area = $b->getBlockAreaObject();
+                    $_bx = \Concrete\Core\Block\Block::getByID($bOriginalID);
+                    if (is_object($_bx)) {
+                        $_bx->setBlockAreaObject($area);
+                        $c = \Concrete\Core\Page\Page::getCurrentPage();
+                        $_bx->setProxyBlock($b);
+                        $_bx->loadNewCollection($c);
+                        $_bx->disableBlockContainer();
+                        $bv = new \Concrete\Core\Block\View\BlockView($_bx);
+                        $bv->setController($b->instance->getScrapbookBlockController());
+                        $bv->disableControls();
+                    }
+                }
+            }
+
             $bv->setAreaObject($this);
             $p = new Permissions($b);
             if ($p->canViewBlock()) {
