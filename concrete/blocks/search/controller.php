@@ -275,13 +275,13 @@ class Controller extends BlockController implements UsesFeatureInterface
      * Default on_start method.
      */
     public function on_start() {
-	    $paging = $this->request->request(Config::get('concrete.seo.paging_string'));
-		if ($paging && $paging >= 2) {
-	        /** @var SeoCanonical $seoCanonical */
-	        $seoCanonical = $this->app->make(SeoCanonical::class);
-	        $seoCanonical->addIncludedQuerystringParameter(Config::get('concrete.seo.paging_string'));
-	    }
-	}
+        $paging = $this->request->request(Config::get('concrete.seo.paging_string'));
+        if ($paging && $paging >= 2) {
+            /** @var SeoCanonical $seoCanonical */
+            $seoCanonical = $this->app->make(SeoCanonical::class);
+            $seoCanonical->addIncludedQuerystringParameter(Config::get('concrete.seo.paging_string'));
+        }
+    }
     
     /**
      * Default view method.
