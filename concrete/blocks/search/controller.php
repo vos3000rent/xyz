@@ -12,6 +12,8 @@ use Core;
 use Database;
 use Page;
 use Request;
+use Concrete\Core\Support\Facade\Config;
+use Concrete\Core\Url\SeoCanonical;
 
 class Controller extends BlockController implements UsesFeatureInterface
 {
@@ -269,6 +271,18 @@ class Controller extends BlockController implements UsesFeatureInterface
         return $this->btCacheBlockOutput;
     }
 
+    /**
+     * Default on_start method.
+     */
+    public function on_start() {
+	    $paging = $this->request->request(Config::get('concrete.seo.paging_string'));
+		if ($paging && $paging >= 2) {
+	        /** @var SeoCanonical $seoCanonical */
+	        $seoCanonical = $this->app->make(SeoCanonical::class);
+	        $seoCanonical->addIncludedQuerystringParameter(Config::get('concrete.seo.paging_string'));
+	    }
+	}
+    
     /**
      * Default view method.
      */
