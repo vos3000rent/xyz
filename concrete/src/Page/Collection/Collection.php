@@ -1258,7 +1258,7 @@ public function outputCustomStyleHeaderItems($return = false)
      * @throws \Doctrine\DBAL\Driver\Exception|\Doctrine\DBAL\Exception
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
-    public function rescanDisplayOrderFromBlock(Block $block, string $arHandle, int $fromDisplay = null)
+    public function rescanDisplayOrderFromBlock(Block $block, string $arHandle, ?int $fromDisplay = null)
     {
         /** This block doesnt have a display order */
         if ($block->getBlockDisplayOrder() === null) {
