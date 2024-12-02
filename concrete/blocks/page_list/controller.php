@@ -138,6 +138,11 @@ class Controller extends BlockController implements UsesFeatureInterface
     /**
      * @var bool|int|string|null
      */
+    public $excludeCanonicalPaging;
+
+    /**
+     * @var bool|int|string|null
+     */
     public $displayAliases;
 
     /**
@@ -279,6 +284,7 @@ class Controller extends BlockController implements UsesFeatureInterface
         $controller->displayFeaturedOnly = $_REQUEST['displayFeaturedOnly'] ?? false;
         $controller->displayAliases = $_REQUEST['displayAliases'] ?? false;
         $controller->paginate = $_REQUEST['paginate'] ?? false;
+        $controller->excludeCanonicalPaging = $_REQUEST['excludeCanonicalPaging'] ?? false;
         $controller->enableExternalFiltering = $_REQUEST['enableExternalFiltering'] ?? false;
         $controller->excludeCurrentPage = $_REQUEST['excludeCurrentPage'] ?? false;
         $controller->filterByRelated = $_REQUEST['filterByRelated'] ?? false;
@@ -454,7 +460,7 @@ class Controller extends BlockController implements UsesFeatureInterface
             }
         }
 
-        if ($this->paginate) {
+        if ($this->paginate && !$this->excludeCanonicalPaging) {
             $paging = $this->request->request($this->list->getQueryPaginationPageParameter());
             if ($paging && $paging >= 2) { // Canonicalize page 2 and greater only
                 /** @var SeoCanonical $seoCanonical */
@@ -534,6 +540,7 @@ class Controller extends BlockController implements UsesFeatureInterface
         $this->set('enableExternalFiltering', false);
         $this->set('excludeCurrentPage', false);
         $this->set('paginate', false);
+        $this->set('excludeCanonicalPaging', false);
         $this->set('cParentID', 0);
         $this->set('cThis', false);
         $this->set('cThisParent', false);
@@ -768,6 +775,7 @@ class Controller extends BlockController implements UsesFeatureInterface
             'excludeCurrentPage' => 0,
             'truncateChars' => 0,
             'paginate' => 0,
+            'excludeCanonicalPaging' => 0,
             'rss' => 0,
             'pfID' => 0,
             'ptID' => 0,
@@ -800,6 +808,7 @@ class Controller extends BlockController implements UsesFeatureInterface
         $args['excludeCurrentPage'] = ($args['excludeCurrentPage']) ? '1' : '0';
         $args['truncateChars'] = (int) ($args['truncateChars']);
         $args['paginate'] = (int) ($args['paginate']);
+        $args['excludeCanonicalPaging'] = (int) ($args['excludeCanonicalPaging']);
         $args['rss'] = (int) ($args['rss']);
         $args['ptID'] = (int) ($args['ptID']);
 
