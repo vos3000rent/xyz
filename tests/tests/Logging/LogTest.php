@@ -4,6 +4,7 @@ namespace Concrete\Tests\Logging;
 
 use Concrete\Core\Application\Application;
 use Concrete\Core\Database\Connection\Connection;
+use Concrete\Core\Entity\Page\PagePath;
 use Concrete\Core\Logging\Channels;
 use Concrete\Core\Logging\Configuration\AdvancedConfiguration;
 use Concrete\Core\Logging\Configuration\ConfigurationFactory;
@@ -28,8 +29,8 @@ use Concrete\Core\Entity\User;
 class LogTest extends ConcreteDatabaseTestCase
 {
     protected $fixtures = [];
-    protected $tables = ['Logs'];
-    protected $metadatas = [User\User::class, User\UserSignup::class];
+    protected $tables = ['Logs', 'Pages', 'Collections'];
+    protected $metadatas = [User\User::class, User\UserSignup::class, PagePath::class];
     protected $app;
 
     /**
@@ -58,7 +59,7 @@ class LogTest extends ConcreteDatabaseTestCase
         $processors = $applicationLogger->getProcessors();
         $handlers = $applicationLogger->getHandlers();
         $this->assertCount(1, $handlers);
-        $this->assertCount(2, $processors);
+        $this->assertCount(3, $processors);
         $this->assertInstanceOf(DatabaseHandler::class, $handlers[0]);
         $this->assertEquals(Logger::DEBUG, $handlers[0]->getLevel());
 
@@ -171,7 +172,7 @@ class LogTest extends ConcreteDatabaseTestCase
         $filesystem->delete($file);
 
         $this->assertCount(1, $logger->getHandlers());
-        $this->assertCount(2, $logger->getProcessors()); // needs to have psr processor and the Concrete processor.
+        $this->assertCount(3, $logger->getProcessors()); // needs to have psr processor and the Concrete processors.
     }
 
     public function testLoggingFacade()
