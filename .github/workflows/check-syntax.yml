@@ -34,3 +34,4 @@ jobs:
           include: |
             bin/concrete
             bin/concrete5
+          fail-on-warnings: true
