@@ -4,35 +4,18 @@ namespace Concrete\Core\Error\Handling;
 
 use Concrete\Core\Config\Repository\Repository;
 use Concrete\Core\Error\Handling\ErrorRenderer\ConcreteErrorRenderer;
-use Concrete\Core\Logging\Levels;
-use Concrete\Core\Permission\Checker;
+use Concrete\Core\Logging\Handler\ErrorEnhancer\UserMessageExceptionEnhancer;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Symfony\Component\ErrorHandler\ErrorHandler as SymfonyErrorHandler;
 use Symfony\Component\ErrorHandler\ErrorRenderer\CliErrorRenderer;
-use Symfony\Component\ErrorHandler\ErrorRenderer\HtmlErrorRenderer;
 
 class ErrorHandler extends SymfonyErrorHandler
 {
-
     /**
-     * @var LoggerInterface|null
-     */
-    protected $logger = null;
-
-    /**
-     * @var Repository
+     * @var \Concrete\Core\Config\Repository\Repository
      */
     protected $config;
-
-    private function fillErrorLevelsFromConfig(array $errors, array $errorConfiguration, string $key): array
-    {
-        $levels = [];
-        foreach ($errors as $errorCode) {
-            $levels[$errorCode] = constant(LogLevel::class . '::' . $errorConfiguration[$key]['logLevel']);
-        }
-        return $levels;
-    }
 
     public function __construct(LoggerInterface $logger, Repository $config)
     {
@@ -72,6 +55,19 @@ class ErrorHandler extends SymfonyErrorHandler
     }
 
     /**
+     * {@inheritDoc}
+     *
+     * @see \Symfony\Component\ErrorHandler\ErrorHandler::getErrorEnhancers()
+     */
+    protected function getErrorEnhancers(): iterable
+    {
+        yield new UserMessageExceptionEnhancer();
+        foreach (parent::getErrorEnhancers() as $enhancer) {
+            yield $enhancer;
+        }
+    }
+
+    /**
      * Mostly ported from SymfonyErrorHandler::renderException, but that method cannot be overridden, and the classes
      * that do the rendering are hard-coded within the method, so we need to swap out the entire method in order to
      * override the Cli and Html error renderers.
@@ -81,7 +77,7 @@ class ErrorHandler extends SymfonyErrorHandler
      */
     protected function renderConcreteException(\Throwable $exception): void
     {
-        $renderer = \in_array(\PHP_SAPI, ['cli', 'phpdbg'], true) ? new CliErrorRenderer() : new ConcreteErrorRenderer($this->config, new Checker());
+        $renderer = \in_array(\PHP_SAPI, ['cli', 'phpdbg'], true) ? new CliErrorRenderer() : app(ConcreteErrorRenderer::class, ['config' => $this->config]);
 
         $exception = $renderer->render($exception);
 
@@ -96,4 +92,12 @@ class ErrorHandler extends SymfonyErrorHandler
         echo $exception->getAsString();
     }
 
+    private function fillErrorLevelsFromConfig(array $errors, array $errorConfiguration, string $key): array
+    {
+        $levels = [];
+        foreach ($errors as $errorCode) {
+            $levels[$errorCode] = constant(LogLevel::class . '::' . $errorConfiguration[$key]['logLevel']);
+        }
+        return $levels;
+    }
 }
